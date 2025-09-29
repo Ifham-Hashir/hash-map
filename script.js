@@ -26,7 +26,7 @@ function HashMap() {
     loadFactor: 0.75,
     capacity: 16,
     size: 0,
-    array: Array(this.capacity),
+    buckets: Array(this.capacity),
 
     hash(key) {
       let hashCode = 0;
@@ -42,12 +42,12 @@ function HashMap() {
     set(key, value) {
       let index = this.hash(key);
   
-      if(typeof(this.array[index]) === "undefined"){
-        this.array[index] = LinkedList();
-        this.array[index].append(key,value);
+      if(typeof(this.buckets[index]) === "undefined"){
+        this.buckets[index] = LinkedList();
+        this.buckets[index].append(key,value);
       }
       else{
-        let currentNode = this.array[index].head;
+        let currentNode = this.buckets[index].head;
         while(currentNode !== null){
           if(currentNode.key === key){
             currentNode.value = value;
@@ -55,18 +55,17 @@ function HashMap() {
           }
           currentNode = currentNode.nextNode;
         }
-        this.array[index].append(key, value);
+        this.buckets[index].append(key, value);
       }
       
       this.size++;
     },
 
     get(key) {
-
       let index = this.hash(key);
 
-      if(typeof(this.array[index]) !== "undefined"){
-        let currentNode = this.array[index].head;
+      if(typeof(this.buckets[index]) !== "undefined"){
+        let currentNode = this.buckets[index].head;
 
         while(currentNode !== null){
           if(currentNode.key === key){
@@ -79,6 +78,98 @@ function HashMap() {
       return null;
     },
 
+    has(key) {
+      let index = this.hash(key);
+
+      if(typeof(this.buckets[index]) !== "undefined"){
+        let currentNode = this.buckets[index].head;
+
+        while(currentNode !== null){
+          if(currentNode.key === key){
+            return true;
+          }
+          currentNode = currentNode.nextNode;
+        }
+      }
+
+      return false;
+    },
+
+    remove(key){
+      let index = this.hash(key);
+
+      if(typeof(this.buckets[index]) !== "undefined"){
+        let currentNode = this.buckets[index].head;
+        let previousNode = currentNode;
+        if(this.buckets[index].length === 1){
+          this.buckets[index].head = null;
+          this.buckets[index].tail = null;
+        }
+        else{
+          while(currentNode !== null){
+            if(currentNode.key === key){
+              
+              return true;
+            }
+            currentNode = currentNode.nextNode;
+          }          
+        }
+      }
+
+      return false;      
+    },
+
+    length() {
+      return this.size;
+    },
+
+    clear() {
+      this.buckets = Array(this.capacity);
+      this.size = 0;
+    },
+
+    keys() {
+      let index = 0;
+      let keysArray = [];
+      while (index < this.buckets.length){
+        if(typeof(this.buckets[index]) !== "undefined"){
+
+          let currentNode = this.buckets[index].head;
+
+          while(currentNode !== null){
+            keysArray.push(currentNode.key);
+            currentNode = currentNode.nextNode;
+          }
+        }
+        index++;
+      }
+      return keysArray;
+    },
+
+    values() {
+      let keys = this.keys();
+      let valuesArray = [];
+
+      for(let i = 0; i < keys.length; i++){
+        let value = this.get(keys[i]);
+
+        if(value !== null){
+          valuesArray.push(value);
+        }
+      }
+
+      return valuesArray;
+    },
+
+    entries() {
+      let keys = this.keys();
+      let values = this.values();
+      let entriesArray = [];
+      for (let i = 0; i < keys.length; i++){
+        entriesArray.push([keys[i], values[i]]);
+      }
+      return entriesArray;
+    },
   }
 }
 
@@ -88,5 +179,7 @@ map.set("i", "ifham");
 map.set("h", "hashir");
 map.set("i", "messi")
 map.set("y", "yarn")
-// console.log(map.array);
-console.log(map.get("k"))
+
+console.log(map.entries())
+console.log(map.buckets)
+
