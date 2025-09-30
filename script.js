@@ -22,12 +22,17 @@ function LinkedList(){
 }
 
 function HashMap() {
+  let capacity = 16;
+  let buckets = Array(capacity);
+  for(let i = 0; i < capacity; i++){
+    buckets[i] = LinkedList();
+  }
   return {
     loadFactor: 0.75,
-    capacity: 16,
     size: 0,
-    buckets: Array(this.capacity),
-
+    capacity,
+    buckets,
+    
     hash(key) {
       let hashCode = 0;
       
@@ -42,8 +47,7 @@ function HashMap() {
     set(key, value) {
       let index = this.hash(key);
   
-      if(typeof(this.buckets[index]) === "undefined"){
-        this.buckets[index] = LinkedList();
+      if(this.buckets[index].head === null){
         this.buckets[index].append(key,value);
       }
       else{
@@ -64,7 +68,7 @@ function HashMap() {
     get(key) {
       let index = this.hash(key);
 
-      if(typeof(this.buckets[index]) !== "undefined"){
+      if(this.buckets[index].head !== null){
         let currentNode = this.buckets[index].head;
 
         while(currentNode !== null){
@@ -81,7 +85,7 @@ function HashMap() {
     has(key) {
       let index = this.hash(key);
 
-      if(typeof(this.buckets[index]) !== "undefined"){
+      if(this.buckets[index].head !== null){
         let currentNode = this.buckets[index].head;
 
         while(currentNode !== null){
@@ -125,6 +129,9 @@ function HashMap() {
 
     clear() {
       this.buckets = Array(this.capacity);
+      for(let i = 0; i < this.capacity; i++){
+        this.buckets[i] = LinkedList();
+      }      
       this.size = 0;
     },
 
@@ -132,7 +139,7 @@ function HashMap() {
       let index = 0;
       let keysArray = [];
       while (index < this.buckets.length){
-        if(typeof(this.buckets[index]) !== "undefined"){
+        if(this.buckets[index].head !== null){
 
           let currentNode = this.buckets[index].head;
 
@@ -173,13 +180,24 @@ function HashMap() {
   }
 }
 
-let map = new HashMap();
+let map = HashMap();
 
 map.set("i", "ifham");
 map.set("h", "hashir");
 map.set("i", "messi")
 map.set("y", "yarn")
 
+// console.log(map.buckets)
+console.log(map.get("i"))
+console.log(map.get("k"))
+console.log(map.has("i"))
+console.log(map.has("k"))
+console.log(map.length())
+console.log(map.keys())
+console.log(map.values())
 console.log(map.entries())
-console.log(map.buckets)
+
+
+
+
 
