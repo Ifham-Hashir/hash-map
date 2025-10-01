@@ -113,7 +113,7 @@ function HashMap() {
       if (this.buckets[index].head !== null) {
         let currentNode = this.buckets[index].head;
         let previousNode;
-        if (this.buckets[index].length === 1) {
+        if (this.buckets[index].length === 1 && currentNode.key === key) {
           this.buckets[index].head = null;
           this.buckets[index].tail = null;
           this.buckets[index].length--;
